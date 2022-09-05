@@ -127,43 +127,11 @@ def lgb_feature(X_train, y_train, X_test, y_test=None):
 
 VAILD = False
 if __name__ == '__main__':
-    if VAILD == True:
-        train_data = pd.read_csv('8288train.csv',engine = 'python');train_data = train_data.fillna(0)
-        test_data = pd.read_csv('8288test.csv',engine = 'python');test_data = test_data.fillna(0)
-        dummy_fea = ['sex', 'merriage', 'income', 'qq_bound', 'degree', 'wechat_bound','account_grade','industry']
-        dummy_df = pd.get_dummies(train_data.loc[:,dummy_fea])
-        train_data_copy = pd.concat([train_data,dummy_df],axis=1)
-        train_data_copy = train_data_copy.fillna(0)
-        vaild_train_data = train_data_copy.drop(dummy_fea,axis=1)
-        valid_train_train = vaild_train_data[(vaild_train_data.year <= 2017) & (vaild_train_data.month < 4)]
-        valid_train_test = vaild_train_data[(vaild_train_data.year >= 2017) & (vaild_train_data.month >= 4)]
-        vaild_train_x = valid_train_train.drop(['target'],axis=1)
-        vaild_test_x = valid_train_test.drop(['target'],axis=1)
-        redict_result = logistic_model(vaild_train_x,valid_train_train['target'].values,vaild_test_x,None)
-        print('valid auc',roc_auc_score(valid_train_test['target'].values,redict_result))
-
-
-
-    # dummy_fea = ['sex', 'merriage', 'income', 'qq_bound', 'degree', 'wechat_bound','account_grade','industry']
-    # for _fea in dummy_fea:
-    #     print(_fea)
-    #     le = LabelEncoder()
-    #     le.fit(train_data[_fea].tolist())
-    #     train_data[_fea] = le.transform(train_data[_fea].tolist())
-    # train_data_copy = train_data.copy()
-    # vaild_train_data = train_data_copy
-    # valid_train_train = vaild_train_data[(vaild_train_data.year <= 2017) & (vaild_train_data.month < 4)]
-    # valid_train_test = vaild_train_data[(vaild_train_data.year >= 2017) & (vaild_train_data.month >= 4)]
-    # vaild_train_x = valid_train_train.drop(['target'],axis=1)
-    # vaild_test_x = valid_train_test.drop(['target'],axis=1)
-
-    # redict_result = lgb_feature(vaild_train_x,valid_train_train['target'].values,vaild_test_x,None)
-    # print('valid auc',roc_auc_score(valid_train_test['target'].values,redict_result))
-
-
-    if VAILD == False:
-        train_data = pd.read_csv('8288train.csv',engine = 'python');train_data = train_data.fillna(0)
-        test_data = pd.read_csv('8288test.csv',engine = 'python');test_data = test_data.fillna(0)
+    train_data = pd.read_csv('8288train.csv',engine = 'python')
+    train_data = train_data.fillna(0)
+    test_data = pd.read_csv('8288test.csv',engine = 'python')
+    test_data = test_data.fillna(0)
+    if not VAILD:
         train_test_data = pd.concat([train_data,test_data],axis=0,ignore_index = True)
         train_test_data = train_test_data.fillna(0)
         train_data = train_test_data.iloc[:train_data.shape[0],:]
@@ -180,8 +148,10 @@ if __name__ == '__main__':
         test_x = test_data.drop(['target'],axis=1)
         lgb_dataset = Dataset(train_x,train_data['target'],test_x,use_cache=False)
         ##############################
-        train_data = pd.read_csv('8288train.csv',engine = 'python');train_data = train_data.fillna(0)
-        test_data = pd.read_csv('8288test.csv',engine = 'python');test_data = test_data.fillna(0)
+        train_data = pd.read_csv('8288train.csv',engine = 'python')
+        train_data = train_data.fillna(0)
+        test_data = pd.read_csv('8288test.csv',engine = 'python')
+        test_data = test_data.fillna(0)
         dummy_fea = ['sex', 'merriage', 'income', 'qq_bound', 'degree', 'wechat_bound','account_grade','industry']
         train_test_data = pd.concat([train_data,test_data],axis=0,ignore_index = True)
         train_test_data = train_test_data.fillna(0)
@@ -210,6 +180,18 @@ if __name__ == '__main__':
         ans['PROB'] = ans['PROB'].map(lambda x:(x-minmin)/(maxmax-minmin))
         ans['PROB'] = ans['PROB'].map(lambda x:'%.4f' % x)
         ans.to_csv('./ans_stacking.csv',index=None)
+    else:
+        dummy_fea = ['sex', 'merriage', 'income', 'qq_bound', 'degree', 'wechat_bound','account_grade','industry']
+        dummy_df = pd.get_dummies(train_data.loc[:,dummy_fea])
+        train_data_copy = pd.concat([train_data,dummy_df],axis=1)
+        train_data_copy = train_data_copy.fillna(0)
+        vaild_train_data = train_data_copy.drop(dummy_fea,axis=1)
+        valid_train_train = vaild_train_data[(vaild_train_data.year <= 2017) & (vaild_train_data.month < 4)]
+        valid_train_test = vaild_train_data[(vaild_train_data.year >= 2017) & (vaild_train_data.month >= 4)]
+        vaild_train_x = valid_train_train.drop(['target'],axis=1)
+        vaild_test_x = valid_train_test.drop(['target'],axis=1)
+        redict_result = logistic_model(vaild_train_x,valid_train_train['target'].values,vaild_test_x,None)
+        print('valid auc',roc_auc_score(valid_train_test['target'].values,redict_result))
 
 
 
