@@ -60,7 +60,7 @@ if __name__ == '__main__':
 #    auth_time = train_auth['auth_time'].map(lambda x:0 if str(x)=='nan' else 1)
 #    auth_time_df = pd.DataFrame();auth_time_df['id'] = train_auth['id'];auth_time_df['auth_time_df'] = auth_time
 
-    # 标记是否为空
+    # 标记是否为空，反应信息的完整度
     auth_idcard = train_auth['id_card'].map(lambda x:0 if str(x)=='nan' else 1)
     auth_idcard_df = pd.DataFrame();auth_idcard_df['id'] = train_auth['id'];auth_idcard_df['auth_idcard_df'] = auth_idcard
     auth_phone = train_auth['phone'].map(lambda x:0 if str(x)=='nan' else 1)
