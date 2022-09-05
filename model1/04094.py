@@ -60,7 +60,7 @@ if __name__ == '__main__':
 #    auth_time = train_auth['auth_time'].map(lambda x:0 if str(x)=='nan' else 1)
 #    auth_time_df = pd.DataFrame();auth_time_df['id'] = train_auth['id'];auth_time_df['auth_time_df'] = auth_time
 
-    # 标记是否为空，反应信息的完整度
+    # 标记是否为空，反应信息的完整度(非空的属性数目/总属性数目)
     auth_idcard = train_auth['id_card'].map(lambda x:0 if str(x)=='nan' else 1)
     auth_idcard_df = pd.DataFrame();auth_idcard_df['id'] = train_auth['id'];auth_idcard_df['auth_idcard_df'] = auth_idcard
     auth_phone = train_auth['phone'].map(lambda x:0 if str(x)=='nan' else 1)
@@ -86,8 +86,10 @@ if __name__ == '__main__':
     train_order['time_order'] = train_order['time_order'].map(lambda x : pd.lib.NaT if (str(x) == '0' or x == 'NA' or x == 'nan')
                                 else (datetime.datetime.strptime(str(x),'%Y-%m-%d %H:%M:%S') if ':' in str(x)
                                 else (datetime.datetime.utcfromtimestamp(int(x[0:10])) + datetime.timedelta(hours = 8))))
+
     train_order_time_max = train_order.groupby(by=['id'], as_index=False)['time_order'].agg({'train_order_time_max':lambda x:max(x)})
     train_order_time_min = train_order.groupby(by=['id'], as_index=False)['time_order'].agg({'train_order_time_min':lambda x:min(x)})
+
     train_order_type_zaixian = train_order.groupby(by=['id']).apply(lambda x:x['type_pay'][(x['type_pay']=='在线支付').values].count()).reset_index(name = 'type_pay_zaixian')
     train_order_type_huodao = train_order.groupby(by=['id']).apply(lambda x:x['type_pay'][(x['type_pay']=='货到付款').values].count()).reset_index(name = 'type_pay_huodao')
 #    train_order_mean_unit_price = train_order.groupby(by=['id']).apply(lambda x:np.mean(x['unit_price'])).reset_index(name = 'mean_unit_price')
@@ -99,7 +101,9 @@ if __name__ == '__main__':
     #%%
     
     train_recieve = pd.read_csv('../AI_risk_train_V3.0/train_recieve_addr_info.csv')
+
     train_recieve['region'] = train_recieve['region'].map(lambda x:str(x)[:2])
+    
     tmp_tmp_recieve = pd.crosstab(train_recieve.id,train_recieve.region);tmp_tmp_recieve = tmp_tmp_recieve.reset_index()
     tmp_tmp_recieve_phone_count = train_recieve.groupby(by=['id']).apply(lambda x:x['fix_phone'].count());tmp_tmp_recieve_phone_count=tmp_tmp_recieve_phone_count.reset_index()
     tmp_tmp_recieve_phone_count_unique = train_recieve.groupby(by=['id']).apply(lambda x:x['fix_phone'].nunique());tmp_tmp_recieve_phone_count_unique=tmp_tmp_recieve_phone_count_unique.reset_index()
