@@ -59,6 +59,8 @@ if __name__ == '__main__':
     train_auth = pd.read_csv('../AI_risk_train_V3.0/train_auth_info.csv',parse_dates = ['auth_time'])
 #    auth_time = train_auth['auth_time'].map(lambda x:0 if str(x)=='nan' else 1)
 #    auth_time_df = pd.DataFrame();auth_time_df['id'] = train_auth['id'];auth_time_df['auth_time_df'] = auth_time
+
+    # 标记是否为空
     auth_idcard = train_auth['id_card'].map(lambda x:0 if str(x)=='nan' else 1)
     auth_idcard_df = pd.DataFrame();auth_idcard_df['id'] = train_auth['id'];auth_idcard_df['auth_idcard_df'] = auth_idcard
     auth_phone = train_auth['phone'].map(lambda x:0 if str(x)=='nan' else 1)
